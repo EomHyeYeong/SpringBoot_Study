@@ -34,7 +34,7 @@ public class ArticleController {
         // 2. 리파지터리로 엔티티를 DB에 저장
         Article saved = articleRepository.save(article);
         log.info(saved.toString());
-        return "";
+        return "redirect:/articles/" + saved.getId();  // 리다이렉트를 작성할 위치(redirect:URL_주소 형식)
     }
 
     // Read

@@ -25,7 +25,7 @@ public class CommentApiController {
     // 2. 댓글 생성
     @PostMapping("/api/articles/{articleId}/comments")
     public ResponseEntity<CommentDto> create(@PathVariable Long articleId,  // 댓글을 생성할 게시글 ID
-                                             @RequestBody CommentDto dto) { // 받아온 댓글 관련 정보
+                                             @RequestBody CommentDto dto) { // 생성할 댓글 관련 정보 받기
         // 서비스에 위임
         CommentDto createdDto = commentService.create(articleId, dto);
 
@@ -34,5 +34,15 @@ public class CommentApiController {
     }
 
     // 3. 댓글 수정
+    @PatchMapping("/api/comments/{id}")
+    public ResponseEntity<CommentDto> update(@PathVariable Long id,             // 수정 대상인 댓글의 id
+                                              @RequestBody CommentDto dto) {    // 수정할 댓글 관련 정보 받기
+        // 서비스에 위임
+        CommentDto updatedDto = commentService.update(id, dto);
+
+        // 결과 응답
+        return ResponseEntity.status(HttpStatus.OK).body(updatedDto);
+    }
+
     // 4. 댓글 삭제
 }

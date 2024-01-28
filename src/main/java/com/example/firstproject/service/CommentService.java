@@ -41,7 +41,7 @@ public class CommentService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional  // DB의 내용을 바꾸기 때문에 문제가 발생했을 때 롤백하도록 함.
+    @Transactional  // DB의 내용을 변경하므로 실패할 경우 데이터를 롤백할 수 있도록 함.
     public CommentDto create(Long articleId, CommentDto dto) {
         // 1. DB에서 게시글 조회, 없을 경우 예외 발생
         Article article = articleRepository.findById(articleId)
@@ -56,5 +56,22 @@ public class CommentService {
 
         // 4. DTO로 변환해 반환
         return CommentDto.createCommentDto(created);
+    }
+
+    @Transactional  // DB의 내용을 변경하므로 실패할 경우 데이터를 롤백할 수 있도록 함.
+    public CommentDto update(Long id, CommentDto dto) {
+        // 1. 댓글 조회 및 예외 발생
+        Comment target = commentRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("댓글 수정 실패!" +
+                        "대상 댓글이 없습니다."));
+
+        // 2. 댓글 수정
+        target.patch(dto);
+
+        // 3. DB로 갱신
+        Comment updated = commentRepository.save(target);
+
+        // 4. 댓글 엔티티를 DTO로 변환 및 반환
+        return CommentDto.createCommentDto(updated);
     }
 }

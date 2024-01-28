@@ -6,6 +6,7 @@ import com.example.firstproject.entity.Comment;
 import com.example.firstproject.repository.ArticleRepository;
 import com.example.firstproject.repository.CommentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -73,5 +74,19 @@ public class CommentService {
 
         // 4. 댓글 엔티티를 DTO로 변환 및 반환
         return CommentDto.createCommentDto(updated);
+    }
+
+    @Transactional  // DB의 내용을 변경하므로 실패할 경우 데이터를 롤백할 수 있도록 함.
+    public CommentDto delete(Long id) {
+        // 1. 댓글 조회 및 예외 발생
+        Comment target = commentRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("댓글 삭제 실패! " +
+                        "대상이 없습니다."));
+
+        // 2. 댓글 삭제
+        commentRepository.delete(target);
+
+        // 3. 삭제 댓글을 DTO로 변환 및 반환
+        return CommentDto.createCommentDto(target);
     }
 }
